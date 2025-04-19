@@ -351,27 +351,36 @@ class _HomeScreenState extends State<HomeScreen> {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
 
+    // Get the canvas size from the last rendering
+    double canvasSize = MediaQuery.of(context).size.width * 0.9;
+    final outputSize = 280.0;
+    final scale = outputSize / canvasSize;
+
     // Set background jadi hitam (biar sesuai MNIST)
     final bgPaint = Paint()..color = Colors.black;
-    canvas.drawRect(Rect.fromLTWH(0, 0, 280, 280), bgPaint);
+    canvas.drawRect(Rect.fromLTWH(0, 0, outputSize, outputSize), bgPaint);
 
     // Gambar angka dengan warna putih
     final paint = Paint()
       ..color = Colors.white
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 25.0
+      ..strokeWidth = 20.0 // Thinner stroke width
       ..blendMode = BlendMode.srcOver; // Biar lebih smooth
 
+    // Scale and center the drawing
     for (int i = 0; i < _points.length; i++) {
       if (i + 1 < _points.length &&
           _points[i] != Offset.infinite &&
           _points[i + 1] != Offset.infinite) {
-        canvas.drawLine(_points[i], _points[i + 1], paint);
+        // Scale the points to match the output image size
+        final scaledPoint1 = Offset(_points[i].dx * scale, _points[i].dy * scale);
+        final scaledPoint2 = Offset(_points[i + 1].dx * scale, _points[i + 1].dy * scale);
+        canvas.drawLine(scaledPoint1, scaledPoint2, paint);
       }
     }
 
     final picture = recorder.endRecording();
-    return await picture.toImage(280, 280);
+    return await picture.toImage(outputSize.toInt(), outputSize.toInt());
   }
 
 }
@@ -386,7 +395,7 @@ class DrawingPainter extends CustomPainter {
     final paint = Paint()
       ..color = Colors.white // Gambar pakai warna putih
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 25.0
+      ..strokeWidth = 15.0 // Thinner stroke width
       ..style = PaintingStyle.stroke;
 
     final path = Path();

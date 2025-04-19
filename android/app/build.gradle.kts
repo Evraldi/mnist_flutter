@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.mnist_flutter"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "28.0.13004108"
+    ndkVersion = "25.1.8937393"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
